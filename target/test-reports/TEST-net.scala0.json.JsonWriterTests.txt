@@ -1,6 +1,0 @@
-Testsuite: net.scala0.json.JsonWriterTests
-Tests run: 3, Failures: 0, Errors: 0, Time elapsed: 0.078 sec
-
-Testcase: testObjects took 0.066 sec
-Testcase: testArrays took 0 sec
-Testcase: testSimpleValues took 0.001 sec
