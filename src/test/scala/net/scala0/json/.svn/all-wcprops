@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/scala-json/!svn/ver/6/trunk/test/src/com/synthesisstudios/scala/json
+END
+JsonTokenizerTests.scala
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/scala-json/!svn/ver/6/trunk/test/src/com/synthesisstudios/scala/json/JsonTokenizerTests.scala
+END
+JsonParserTests.scala
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/scala-json/!svn/ver/6/trunk/test/src/com/synthesisstudios/scala/json/JsonParserTests.scala
+END
+JsonWriterTests.scala
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/scala-json/!svn/ver/6/trunk/test/src/com/synthesisstudios/scala/json/JsonWriterTests.scala
+END

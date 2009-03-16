@@ -1,0 +1,3 @@
+package com.synthesisstudios.json
+
+class JsonException(msg:String) extends Exception(msg)

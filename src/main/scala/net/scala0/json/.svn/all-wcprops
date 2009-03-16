@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/scala-json/!svn/ver/7/trunk/main/src/com/synthesisstudios/json
+END
+JsonTokenizer.scala
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/scala-json/!svn/ver/6/trunk/main/src/com/synthesisstudios/json/JsonTokenizer.scala
+END
+JsonParser.scala
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/scala-json/!svn/ver/6/trunk/main/src/com/synthesisstudios/json/JsonParser.scala
+END
+JsonValue.scala
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/scala-json/!svn/ver/6/trunk/main/src/com/synthesisstudios/json/JsonValue.scala
+END
+JsonWriter.scala
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/scala-json/!svn/ver/7/trunk/main/src/com/synthesisstudios/json/JsonWriter.scala
+END
+JsonException.scala
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/scala-json/!svn/ver/6/trunk/main/src/com/synthesisstudios/json/JsonException.scala
+END
+JsonReader.scala
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/scala-json/!svn/ver/6/trunk/main/src/com/synthesisstudios/json/JsonReader.scala
+END
