@@ -32,7 +32,7 @@ object JsonParser {
      */
     def parseObject(source:String):JsonObject = parse(source) match {
         case obj @ JsonObject() => obj
-        case v @ _ => throw new IllegalStateException("Expecting object, found: " + v)
+        case v @ _ => throw new JsonException("Expecting object, found: " + v)
     }
     
     /**
@@ -40,7 +40,7 @@ object JsonParser {
      */
     def parseObject(input:Reader):JsonObject = parse(input) match {
         case obj @ JsonObject() => obj
-        case v @ _ => throw new IllegalStateException("Expecting object, found: " + v)
+        case v @ _ => throw new JsonException("Expecting object, found: " + v)
     }
     
     /**
@@ -48,6 +48,6 @@ object JsonParser {
      */
     def parseObject(input:InputStream):JsonObject = parse(input) match {
         case obj @ JsonObject() => obj
-        case v @ _ => throw new IllegalStateException("Expecting object, found: " + v)
+        case v @ _ => throw new JsonException("Expecting object, found: " + v)
     }
 }

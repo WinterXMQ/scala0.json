@@ -3,8 +3,8 @@
 	<property name="lib.dir" location="${basedir}/lib"/>
 	<property name="scala.compiler.jar" location="${lib.dir}/scala-compiler-2.7.3.jar"/>
 	<property name="scala.library.jar" location="${lib.dir}/scala-library-2.7.3.jar"/>
-	<property name="src.main.dir" location="${basedir}/src/main"/>
-	<property name="src.test.dir" location="${basedir}/src/test"/>
+	<property name="src.main.dir" location="${basedir}/src/main/scala"/>
+	<property name="src.test.dir" location="${basedir}/src/test/scala"/>
 	<property name="target.dir" location="${basedir}/target"/>
 	<property name="target.main.dir" location="${target.dir}/classes"/>
 	<property name="target.test.dir" location="${target.dir}/test-classes"/>
