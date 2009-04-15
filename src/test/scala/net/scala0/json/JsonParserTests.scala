@@ -17,15 +17,14 @@
  */
 package net.scala0.json
 
-import junit.framework._
-import junit.framework.Assert._
+import org.scalatest.FunSuite
 
-class JsonParserTests extends TestCase {
-    private def testValue(value:JsonValue) = {
-        assertEquals(value, JsonParser.parse(value.toString))
+class JsonParserTests extends FunSuite {
+    private def testValue(value: JsonValue) = {
+        assert(value === JSON.parse(value.toString))
     }
         
-    def testSimpleValues() = {
+    test("simple values") {
         testValue(JsonNull)
         testValue(JsonBoolean(true))
         testValue(JsonBoolean(false))
@@ -34,14 +33,14 @@ class JsonParserTests extends TestCase {
         testValue(JsonString("hello"))
     }
 
-    def testArrays() = {
+    test("arrays") {
         testValue(JsonArray())
         testValue(JsonArray().add(JsonNumber(1)))
         testValue(JsonArray().add(JsonNumber(1)).add(JsonNumber(2)).add(JsonNumber(3)))
         testValue(JsonArray().add(JsonNumber(1)).add(JsonArray().add(JsonBoolean(true)).add(JsonString("hello"))))
     }
     
-    def testObjects() = {
+    test("objects") {
         testValue(JsonObject())
         testValue(JsonObject().put("first", JsonString("Jeremy")))
         testValue(JsonObject().put("first", JsonString("Jeremy")).put("last", JsonString("Cloud")))

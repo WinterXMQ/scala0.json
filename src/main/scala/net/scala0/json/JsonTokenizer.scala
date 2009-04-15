@@ -22,13 +22,13 @@ import java.io.{Reader, StringReader}
 /**
  * Tokenizes a Reader stream into JsonToken objects
  */
-class JsonTokenizer(input:Reader) {
+class JsonTokenizer(input: Reader) {
     import java.lang.Character._
     
-    private var pushedChar:Char = 0
-    private var pushedToken:Option[JsonToken] = null
+    private var pushedChar: Char = 0
+    private var pushedToken: Option[JsonToken] = null
     
-    def this(source:String) {
+    def this(source: String) {
         this(new StringReader(source))
     }
     
@@ -36,7 +36,7 @@ class JsonTokenizer(input:Reader) {
      * Looks ahead at the type of the next token.
      * Possible values are: '{' '}', '[', ']', ':', ',', '"', '0', 0
      */
-    def peek:char = {
+    def peek: Char = {
         if (pushedToken == null) {
             pushedToken = next
         }
@@ -47,7 +47,7 @@ class JsonTokenizer(input:Reader) {
         }
     }
     
-    def next:Option[JsonToken] = {
+    def next: Option[JsonToken] = {
         if (pushedToken != null) {
             val res = pushedToken
             pushedToken = null
@@ -65,7 +65,7 @@ class JsonTokenizer(input:Reader) {
             case '\'' => Some(JsonToken('"', parseSingleQuotedString()))
             case '-' => Some(JsonToken('0', parseNumber('-')))
             case 0 => None
-            case c:Char =>
+            case c: Char =>
                 if (isWhitespace(c))
                     next
                 else if (Character.isDigit(c))
@@ -77,7 +77,7 @@ class JsonTokenizer(input:Reader) {
         }
     }
     
-    private def nextChar:Char = {
+    private def nextChar: Char = {
         if (pushedChar != 0) {
             val res = pushedChar
             pushedChar = 0
@@ -89,7 +89,7 @@ class JsonTokenizer(input:Reader) {
         }
     }
     
-    private def peekChar:Char = {
+    private def peekChar: Char = {
         if (pushedChar == 0) {
             pushedChar = nextChar
         }
@@ -97,7 +97,7 @@ class JsonTokenizer(input:Reader) {
         pushedChar
     }
     
-    private def parseDoubleQuotedString():String = {
+    private def parseDoubleQuotedString(): String = {
         val sb = new StringBuilder()
         var esc = false
 
@@ -111,7 +111,7 @@ class JsonTokenizer(input:Reader) {
                     case 'r' => sb.append('\r')
                     case 't' => sb.append('\t')
                     case 'u' => sb.append(parseHexCode())
-                    case c:Char => sb.append(c.toChar)
+                    case c: Char => sb.append(c.toChar)
                 }
                 esc = false
             }
@@ -120,7 +120,7 @@ class JsonTokenizer(input:Reader) {
                     case 0 => throw new JsonException("Unclosed string literal")
                     case '\\' => esc = true
                     case '"' => return sb.toString
-                    case c:Char => sb.append(c)
+                    case c: Char => sb.append(c)
                 }
             }
         }
@@ -129,7 +129,7 @@ class JsonTokenizer(input:Reader) {
     }
     
     
-    private def parseSingleQuotedString():String = {
+    private def parseSingleQuotedString(): String = {
         val sb = new StringBuilder()        
         var esc = false
 
@@ -143,7 +143,7 @@ class JsonTokenizer(input:Reader) {
                     case 'r' => sb.append('\r')
                     case 't' => sb.append('\t')
                     case 'u' => sb.append(parseHexCode())
-                    case c:Char => sb.append(c.toChar)
+                    case c: Char => sb.append(c.toChar)
                 }
                 esc = false
             }
@@ -152,7 +152,7 @@ class JsonTokenizer(input:Reader) {
                     case 0 => throw new JsonException("Unclosed string literal")
                     case '\\' => esc = true
                     case '\'' => return sb.toString
-                    case c:Char => sb.append(c)
+                    case c: Char => sb.append(c)
                 }
             }
         }
@@ -161,12 +161,12 @@ class JsonTokenizer(input:Reader) {
     }
     
     
-    private def parseHexCode():char = {
+    private def parseHexCode(): Char = {
         return ((parseHexChar << 12) | (parseHexChar << 8) | (parseHexChar << 4) | parseHexChar).toChar
     }
     
     
-    private def parseHexChar:int = {
+    private def parseHexChar: Int = {
         val c = nextChar
         
         if (c == 0) 
@@ -182,7 +182,7 @@ class JsonTokenizer(input:Reader) {
     }
     
     
-    private def parseNumber(start:Char):String = {
+    private def parseNumber(start: Char): String = {
         val sb = new StringBuilder()
 
         sb.append(start)
@@ -211,7 +211,7 @@ class JsonTokenizer(input:Reader) {
         sb.toString
     }
     
-    private def parseIdentifier(start:Char):String = {
+    private def parseIdentifier(start: Char): String = {
         val sb = new StringBuilder()
 
         sb.append(start)
@@ -224,4 +224,4 @@ class JsonTokenizer(input:Reader) {
     }
 }
 
-case class JsonToken(ttype:char, text:String)
+case class JsonToken(ttype: Char, text: String)

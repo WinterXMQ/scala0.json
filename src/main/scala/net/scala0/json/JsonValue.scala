@@ -24,7 +24,7 @@ import scala.collection.mutable.ArrayBuffer
  * The root JsonValue class.
  */
 trait JsonValue {
-    override def toString:String = {
+    override def toString: String = {
         val sp = new StringWriter()
         new JsonWriter(sp).value(this)
         sp.toString()
@@ -34,31 +34,31 @@ trait JsonValue {
 /**
  * A JsonNumber wraps a Number, which might be a Double or a Long.
  */
-case class JsonNumber(val value:Number) extends JsonValue
-case class JsonString(val value:String) extends JsonValue
-case class JsonBoolean(val value:Boolean) extends JsonValue
+case class JsonNumber(val value: Number) extends JsonValue
+case class JsonString(val value: String) extends JsonValue
+case class JsonBoolean(val value: Boolean) extends JsonValue
 /**
  * JsonNull is used to represent the 'null' value in Json
  */
 object JsonNull extends JsonValue
 
-case class JsonArray extends ArrayBuffer[JsonValue] with JsonValue {
-    def add(value:JsonValue):JsonArray = {
+case class JsonArray() extends ArrayBuffer[JsonValue] with JsonValue {
+    def add(value: JsonValue): JsonArray = {
         this += value
         this
     }
-    def addAll(values:Collection[JsonValue]):JsonArray = {
+    def addAll(values: Collection[JsonValue]): JsonArray = {
         this ++= values
         this
     }
 }
 
-case class JsonObject extends ArrayBuffer[JsonBinding] with JsonValue {
-//    override def equals(any:Any):boolean = ArrayBuffer[JsonBinding].super.equals(any)
+case class JsonObject() extends ArrayBuffer[JsonBinding] with JsonValue {
+//    override def equals(any: Any):boolean = ArrayBuffer[JsonBinding].super.equals(any)
     
-    def apply(key:String):Option[JsonValue] = find(_.key == key).map(_.value)
+    def apply(key: String): Option[JsonValue] = find(_.key == key).map(_.value)
     
-    def getString(key:String):String = {
+    def getString(key: String): String = {
         this(key) match {
             case None => throw new IllegalStateException("Key not found: `" + key + "` in " + this)
             case Some(v) => v match {
@@ -72,7 +72,7 @@ case class JsonObject extends ArrayBuffer[JsonBinding] with JsonValue {
         }
     }
     
-    def getOptString(key:String):Option[String] = {
+    def getOptString(key: String): Option[String] = {
         this(key) match {
             case None => None
             case Some(v) => v match {
@@ -86,7 +86,7 @@ case class JsonObject extends ArrayBuffer[JsonBinding] with JsonValue {
         }
     }
     
-    def getNumber(key:String):Number = {
+    def getNumber(key: String): Number = {
         this(key) match {
             case None => throw new IllegalStateException("Key not found: `" + key + "` in " + this)
             case Some(v) => v match {
@@ -100,7 +100,7 @@ case class JsonObject extends ArrayBuffer[JsonBinding] with JsonValue {
         }
     }
     
-    def getOptNumber(key:String):Option[Number] = {
+    def getOptNumber(key: String): Option[Number] = {
         this(key) match {
             case None => None
             case Some(v) => v match {
@@ -114,7 +114,7 @@ case class JsonObject extends ArrayBuffer[JsonBinding] with JsonValue {
         }
     }
     
-    def getBoolean(key:String):Boolean = {
+    def getBoolean(key: String): Boolean = {
         this(key) match {
             case None => throw new IllegalStateException("Key not found: `" + key + "` in " + this)
             case Some(v) => v match {
@@ -128,7 +128,7 @@ case class JsonObject extends ArrayBuffer[JsonBinding] with JsonValue {
         }
     }
     
-    def getOptBoolean(key:String):Option[Boolean] = {
+    def getOptBoolean(key: String): Option[Boolean] = {
         this(key) match {
             case None => None
             case Some(v) => v match {
@@ -142,7 +142,7 @@ case class JsonObject extends ArrayBuffer[JsonBinding] with JsonValue {
         }
     }
     
-    def getObject(key:String):JsonObject = {
+    def getObject(key: String): JsonObject = {
         this(key) match {
             case None => throw new IllegalStateException("Key not found: `" + key + "` in " + this)
             case Some(v) => v match {
@@ -156,7 +156,7 @@ case class JsonObject extends ArrayBuffer[JsonBinding] with JsonValue {
         }
     }
     
-    def getOptObject(key:String):Option[JsonObject] = {
+    def getOptObject(key: String): Option[JsonObject] = {
         this(key) match {
             case None => None
             case Some(v) => v match {
@@ -170,7 +170,7 @@ case class JsonObject extends ArrayBuffer[JsonBinding] with JsonValue {
         }
     }
     
-    def getArray(key:String):JsonArray = {
+    def getArray(key: String): JsonArray = {
         this(key) match {
             case None => throw new IllegalStateException("Key not found: `" + key + "` in " + this)
             case Some(v) => v match {
@@ -184,7 +184,7 @@ case class JsonObject extends ArrayBuffer[JsonBinding] with JsonValue {
         }
     }
     
-    def getOptArray(key:String):Option[JsonArray] = {
+    def getOptArray(key: String): Option[JsonArray] = {
         this(key) match {
             case None => None
             case Some(v) => v match {
@@ -198,15 +198,15 @@ case class JsonObject extends ArrayBuffer[JsonBinding] with JsonValue {
         }
     }
     
-    def update(key:String, value:JsonValue) = append(JsonBinding(key, value))
-    def put(key:String, value:JsonValue):JsonObject = {
+    def update(key: String, value: JsonValue) = append(JsonBinding(key, value))
+    def put(key: String, value: JsonValue): JsonObject = {
         append(JsonBinding(key, value))
         this
     }
-    def addAll(values:Collection[JsonBinding]):JsonObject = {
+    def addAll(values: Collection[JsonBinding]): JsonObject = {
         this ++= values
         this
     }
 }
 
-case class JsonBinding(val key:String, val value:JsonValue)
+case class JsonBinding(val key: String, val value: JsonValue)

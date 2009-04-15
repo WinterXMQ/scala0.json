@@ -20,34 +20,34 @@ package net.scala0.json
 import java.io._
 
 /**
- * The JsonParser object provides entry point methods for parsing json.
+ * The JSON object provides entry point methods for parsing json.
  */
-object JsonParser {
+object JSON {
     /**
      * Parses the input as any JSON value.
      */
-    def parse(source:String):JsonValue = {
+    def parse(source: String): JsonValue = {
         new JsonReader(new JsonTokenizer(source)).parseValue
     }
     
     /**
      * Parses the input as any JSON value.
      */
-    def parse(input:Reader):JsonValue = {
+    def parse(input: Reader): JsonValue = {
         new JsonReader(new JsonTokenizer(input)).parseValue
     }
     
     /**
      * Parses the input as any JSON value.
      */
-    def parse(input:InputStream):JsonValue = {
+    def parse(input: InputStream): JsonValue = {
         new JsonReader(new JsonTokenizer(new InputStreamReader(input))).parseValue
     }
 
     /**
      * Parses the input as a JSON object.  
      */
-    def parseObject(source:String):JsonObject = parse(source) match {
+    def parseObject(source: String): JsonObject = parse(source) match {
         case obj @ JsonObject() => obj
         case v @ _ => throw new JsonException("Expecting object, found: " + v)
     }
@@ -55,7 +55,7 @@ object JsonParser {
     /**
      * Parses the input as a JSON object.  
      */
-    def parseObject(input:Reader):JsonObject = parse(input) match {
+    def parseObject(input: Reader): JsonObject = parse(input) match {
         case obj @ JsonObject() => obj
         case v @ _ => throw new JsonException("Expecting object, found: " + v)
     }
@@ -63,7 +63,7 @@ object JsonParser {
     /**
      * Parses the input as a JSON object.  
      */
-    def parseObject(input:InputStream):JsonObject = parse(input) match {
+    def parseObject(input: InputStream): JsonObject = parse(input) match {
         case obj @ JsonObject() => obj
         case v @ _ => throw new JsonException("Expecting object, found: " + v)
     }

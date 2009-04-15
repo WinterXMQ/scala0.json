@@ -17,4 +17,4 @@
  */
 package net.scala0.json
 
-class JsonException(msg:String) extends Exception(msg)
+class JsonException(msg: String) extends Exception(msg)

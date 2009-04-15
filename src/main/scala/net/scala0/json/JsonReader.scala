@@ -20,14 +20,14 @@ package net.scala0.json
 /**
  * JsonReader builds JsonValues using a JsonTokenizer.  Typically,
  * you wouldn't use this class directly, you would just use the 
- * JsonParser class.
+ * JSON class.
  */
-class JsonReader(tkr:JsonTokenizer) {
+class JsonReader(tkr: JsonTokenizer) {
     /**
      * Reads the next option value, returning Some(JsonValue) if found,
      * or None if the end of the stream is reached
      */
-    def readValue:Option[JsonValue] = {
+    def readValue: Option[JsonValue] = {
         tkr.next match {
             case None => None
             case Some(token) => Some(parseValue(token))
@@ -38,9 +38,9 @@ class JsonReader(tkr:JsonTokenizer) {
      * Parses the next value.  Throws JsonException if the end
      * of the stream is reached.
      */
-    def parseValue:JsonValue = parseValue(nextToken)
+    def parseValue: JsonValue = parseValue(nextToken)
     
-    private def parseValue(token:JsonToken):JsonValue = {
+    private def parseValue(token: JsonToken): JsonValue = {
         token.ttype match {
             case '"' => JsonString(token.text)
             case '0' => parseNumber(token.text)
@@ -57,7 +57,7 @@ class JsonReader(tkr:JsonTokenizer) {
         }
     }
 
-    private def parseNumber(text:String):JsonValue = {
+    private def parseNumber(text: String): JsonValue = {
         if (text.indexOf('.') >= 0 || text.indexOf('e') >= 0 || text.indexOf('E') >= 0) {
             JsonNumber(text.toDouble)
         }
@@ -73,7 +73,7 @@ class JsonReader(tkr:JsonTokenizer) {
         }
     }
     
-    private def parseObject:JsonValue = {
+    private def parseObject: JsonValue = {
         val obj = new JsonObject()
         
         if (tkr.peek != '}') {
@@ -89,7 +89,7 @@ class JsonReader(tkr:JsonTokenizer) {
         obj
     }
     
-    private def parseBinding:JsonBinding = {
+    private def parseBinding: JsonBinding = {
         val key = nextToken match {
             case JsonToken(ttype, text) =>
                 ttype match {
@@ -103,7 +103,7 @@ class JsonReader(tkr:JsonTokenizer) {
         new JsonBinding(key, value)
     }
     
-    private def parseArray:JsonValue = {
+    private def parseArray: JsonValue = {
         val array = new JsonArray()
         
         if (tkr.peek != ']') {
@@ -119,14 +119,14 @@ class JsonReader(tkr:JsonTokenizer) {
         array
     }
     
-    private def nextToken:JsonToken = {
+    private def nextToken: JsonToken = {
         tkr.next match {
             case None => throw new JsonException("Unexpected end of input")
             case Some(token) => token
         }
     }
     
-    private def matchToken(expectedType:char):JsonToken = {
+    private def matchToken(expectedType: Char): JsonToken = {
         val token = nextToken
         if (token.ttype != expectedType) {
             throw new JsonException("Unexpected token: `" + token.text + "`")
