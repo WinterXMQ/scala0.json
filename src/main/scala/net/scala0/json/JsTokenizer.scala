@@ -20,13 +20,13 @@ package net.scala0.json
 import java.io.{Reader, StringReader}
 
 /**
- * Tokenizes a Reader stream into JsonToken objects
+ * Tokenizes a Reader stream into JsToken objects
  */
-class JsonTokenizer(input: Reader) {
+class JsTokenizer(input: Reader) {
     import java.lang.Character._
     
     private var pushedChar: Char = 0
-    private var pushedToken: Option[JsonToken] = null
+    private var pushedToken: Option[JsToken] = null
     
     def this(source: String) {
         this(new StringReader(source))
@@ -43,11 +43,11 @@ class JsonTokenizer(input: Reader) {
         
         pushedToken match {
             case None => 0
-            case Some(JsonToken(ttype, _)) => ttype
+            case Some(JsToken(ttype, _)) => ttype
         }
     }
     
-    def next: Option[JsonToken] = {
+    def next: Option[JsToken] = {
         if (pushedToken != null) {
             val res = pushedToken
             pushedToken = null
@@ -55,25 +55,25 @@ class JsonTokenizer(input: Reader) {
         }
         
         nextChar match {
-            case '{' => Some(JsonToken('{', "{"))
-            case '}' => Some(JsonToken('}', "}"))
-            case '[' => Some(JsonToken('[', "["))
-            case ']' => Some(JsonToken(']', "]"))
-            case ':' => Some(JsonToken(':', ":"))
-            case ',' => Some(JsonToken(',', ","))
-            case '"' => Some(JsonToken('"', parseDoubleQuotedString()))
-            case '\'' => Some(JsonToken('"', parseSingleQuotedString()))
-            case '-' => Some(JsonToken('0', parseNumber('-')))
+            case '{' => Some(JsToken('{', "{"))
+            case '}' => Some(JsToken('}', "}"))
+            case '[' => Some(JsToken('[', "["))
+            case ']' => Some(JsToken(']', "]"))
+            case ':' => Some(JsToken(':', ":"))
+            case ',' => Some(JsToken(',', ","))
+            case '"' => Some(JsToken('"', parseDoubleQuotedString()))
+            case '\'' => Some(JsToken('"', parseSingleQuotedString()))
+            case '-' => Some(JsToken('0', parseNumber('-')))
             case 0 => None
             case c: Char =>
                 if (isWhitespace(c))
                     next
                 else if (Character.isDigit(c))
-                    Some(JsonToken('0', parseNumber(c)))
+                    Some(JsToken('0', parseNumber(c)))
                 else if (isJavaIdentifierPart(c))
-                    Some(JsonToken('a', parseIdentifier(c)))
+                    Some(JsToken('a', parseIdentifier(c)))
                 else
-                    throw new JsonException("Unexpected character '" + c + "'")
+                    throw new JsException("Unexpected character '" + c + "'")
         }
     }
     
@@ -104,7 +104,7 @@ class JsonTokenizer(input: Reader) {
         while (true) {
             if (esc) {
                 nextChar match {
-                    case 0 => throw new JsonException("Unclosed string literal")
+                    case 0 => throw new JsException("Unclosed string literal")
                     case 'b' => sb.append('\b')
                     case 'f' => sb.append('\f')
                     case 'n' => sb.append('\n')
@@ -117,7 +117,7 @@ class JsonTokenizer(input: Reader) {
             }
             else {
                 nextChar match {
-                    case 0 => throw new JsonException("Unclosed string literal")
+                    case 0 => throw new JsException("Unclosed string literal")
                     case '\\' => esc = true
                     case '"' => return sb.toString
                     case c: Char => sb.append(c)
@@ -136,7 +136,7 @@ class JsonTokenizer(input: Reader) {
         while (true) {
             if (esc) {
                 nextChar match {
-                    case 0 => throw new JsonException("Unclosed string literal")
+                    case 0 => throw new JsException("Unclosed string literal")
                     case 'b' => sb.append('\b')
                     case 'f' => sb.append('\f')
                     case 'n' => sb.append('\n')
@@ -149,7 +149,7 @@ class JsonTokenizer(input: Reader) {
             }
             else {
                 nextChar match {
-                    case 0 => throw new JsonException("Unclosed string literal")
+                    case 0 => throw new JsException("Unclosed string literal")
                     case '\\' => esc = true
                     case '\'' => return sb.toString
                     case c: Char => sb.append(c)
@@ -170,7 +170,7 @@ class JsonTokenizer(input: Reader) {
         val c = nextChar
         
         if (c == 0) 
-            throw new JsonException("Expecting hex character, but reached end of stream")
+            throw new JsException("Expecting hex character, but reached end of stream")
         else if (c >= '0' && c <= '9')
             c - '0'
         else if (c >= 'a' && c <= 'f')
@@ -178,7 +178,7 @@ class JsonTokenizer(input: Reader) {
         else if (c >= 'A' && c <= 'F')
             c - 'A' + 10
         else
-            throw new JsonException("Expecting hex character, found '" + c + "'")
+            throw new JsException("Expecting hex character, found '" + c + "'")
     }
     
     
@@ -224,4 +224,4 @@ class JsonTokenizer(input: Reader) {
     }
 }
 
-case class JsonToken(ttype: Char, text: String)
+case class JsToken(ttype: Char, text: String)

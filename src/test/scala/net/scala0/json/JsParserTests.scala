@@ -19,31 +19,33 @@ package net.scala0.json
 
 import org.scalatest.FunSuite
 
-class JsonParserTests extends FunSuite {
-    private def testValue(value: JsonValue) = {
+class JsParserTests extends FunSuite {
+    import JSON._
+    
+    private def testValue(value: JsValue) = {
         assert(value === JSON.parse(value.toString))
     }
         
     test("simple values") {
-        testValue(JsonNull)
-        testValue(JsonBoolean(true))
-        testValue(JsonBoolean(false))
-        testValue(JsonNumber(42))
-        testValue(JsonNumber(3.14))
-        testValue(JsonString("hello"))
+        testValue(JsNull)
+        testValue(JsBoolean(true))
+        testValue(JsBoolean(false))
+        testValue(JsNumber(42))
+        testValue(JsNumber(3.14))
+        testValue(JsString("hello"))
     }
 
     test("arrays") {
-        testValue(JsonArray())
-        testValue(JsonArray().add(JsonNumber(1)))
-        testValue(JsonArray().add(JsonNumber(1)).add(JsonNumber(2)).add(JsonNumber(3)))
-        testValue(JsonArray().add(JsonNumber(1)).add(JsonArray().add(JsonBoolean(true)).add(JsonString("hello"))))
+        testValue(JsArray())
+        testValue(JsArray(1))
+        testValue(JsArray(1, 2, 3))
+        testValue(JsArray(1, JsArray(true, "hello")))
     }
     
     test("objects") {
-        testValue(JsonObject())
-        testValue(JsonObject().put("first", JsonString("Jeremy")))
-        testValue(JsonObject().put("first", JsonString("Jeremy")).put("last", JsonString("Cloud")))
-        testValue(JsonObject().put("a", JsonObject().put("b", JsonBoolean(false))).put("c", JsonArray().add(JsonString("green"))))
+        testValue(JsObject())
+        testValue(JsObject("first" -> "Jeremy"))
+        testValue(JsObject("first" -> "Jeremy", "last" -> "Cloud"))
+        testValue(JsObject("a" -> JsObject("b" -> false), "c" -> JsArray("green")))
     }
 }

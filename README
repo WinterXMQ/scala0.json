@@ -1,0 +1,96 @@
+This project uses the simple-build-tool for scala to build the project.
+
+Usage:
+    Parsing:
+        JSON.parse(...)
+        
+    Composing:
+        import JSON._
+        
+        Simple values:
+            JsNull
+            JsBoolean(true)
+            JsBoolean(false)
+            JsNumber(42)
+            JsNumber(3.14)
+            JsString("hello")
+            
+        Arrays:
+            JsArray()
+            JsArray(1)
+            JsArray(1, 2, 3)
+            JsArray(1, JsArray(true, "hello"))
+
+        Objects:
+            JsObject()
+            JsObject("first" -> "Jeremy")
+            JsObject("first" -> "Jeremy", "last" -> "Cloud")
+            JsObject("a" -> JsObject("b" -> false), "c" -> JsArray("green"))
+            
+        Mixed:
+            JsObject(
+                "glossary" -> JsObject(
+                    "title" -> "example glossary", 
+                    "GlossDiv" -> JsObject(
+                        "title" -> "S",
+                        "GlossList" -> JsObject(
+                            "GlossEntry"-> JsObject(
+                                "ID" -> "SGML",
+            					"SortAs" -> "SGML",
+            					"GlossTerm" -> "Standard Generalized Markup Language",
+            					"Acronym" -> "SGML",
+            					"Abbrev" -> "ISO 8879:1986",
+            					"GlossDef" -> JsObject(
+                                    "para" -> "A meta-markup language, used to create markup languages such as DocBook.",
+            						"GlossSeeAlso" -> JsArray("GML", "XML")
+                                ),
+            					"GlossSee"-> "markup"
+                            )
+                        )
+                    )
+                )
+            )
+        
+        
+    Output:
+        println(jsValue.toString)
+        or:
+            val out = new JsWriter(output)
+            out.startObject
+            out.key("id").value(42)
+            out.key("values").value(JsArray(1, 2, 3))
+            out.endObject
+            
+    Extracting:
+        val json = JsObject(
+            "glossary" -> JsObject(
+                "title" -> "example glossary", 
+                "GlossDiv" -> JsObject(
+                    "title" -> "S",
+                    "GlossList" -> JsObject(
+                        "GlossEntry"-> JsObject(
+                            "ID" -> "SGML",
+        					"SortAs" -> "SGML",
+        					"GlossTerm" -> "Standard Generalized Markup Language",
+        					"Acronym" -> "SGML",
+        					"Abbrev" -> "ISO 8879:1986",
+        					"GlossDef" -> JsObject(
+                                "para" -> "A meta-markup language, used to create markup languages such as DocBook.",
+        						"GlossSeeAlso" -> JsArray("GML", "XML")
+                            ),
+        					"GlossSee"-> "markup"
+                        )
+                    )
+                )
+            )
+        )
+        
+        val title = json("glossary")("title").text
+        val entryId = json("glossary")("GlossDiv")("GlossList")("GlossEntry")("ID").text
+            
+    Matching:
+        
+
+To Do:
+    * Write better documentation
+    * Write more and better unit tests

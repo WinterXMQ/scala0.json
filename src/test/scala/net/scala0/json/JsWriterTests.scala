@@ -19,47 +19,35 @@ package net.scala0.json
 
 import org.scalatest.FunSuite
 
-class JsonWriterTests extends FunSuite {
+class JsWriterTests extends FunSuite {
+    import JSON._
+    
     test("SimpleValues") {
-        assert("null" === JsonNull.toString)
-        assert("true" === JsonBoolean(true).toString)
-        assert("false" === JsonBoolean(false).toString)
-        assert("42" === JsonNumber(42).toString)
-        assert("3.14159" === JsonNumber(3.14159).toString)
-        assert("\"hello\\nworld\"" === JsonString("hello\nworld").toString)
+        assert("null" === JsNull.toString)
+        assert("true" === JsBoolean(true).toString)
+        assert("false" === JsBoolean(false).toString)
+        assert("42" === JsNumber(42).toString)
+        assert("3.14159" === JsNumber(3.14159).toString)
+        assert("\"hello\\nworld\"" === JsString("hello\nworld").toString)
     }
     
     test("Arrays") {
-        var array = JsonArray()
-        assert("[]" === array.toString)
-
-        array += JsonNumber(1)
-        assert("[1]" === array.toString)
-
-        array += JsonNumber(2)
-        assert("[1,2]" === array.toString)
-
-        val subarray = JsonArray()
-        subarray += JsonString("pony")
-        array += subarray
-        assert("[1,2,[\"pony\"]]" === array.toString)
+        assert("[]" === JsArray().toString)
+        assert("[1]" === JsArray(1).toString)
+        assert("[1,2]" === JsArray(1, 2).toString)
     }
     
     test("Objects") {
-        var obj = JsonObject()
+        val obj = new JsObjectBuffer
         assert("{}" === obj.toString)
         
-        obj("firstName") = JsonString("Jeremy")
+        obj("firstName") = "Jeremy"
         assert("{\"firstName\":\"Jeremy\"}" === obj.toString)
         
-        obj("lastName") = JsonString("Cloud")
+        obj("lastName") = "Cloud"
         assert("{\"firstName\":\"Jeremy\",\"lastName\":\"Cloud\"}" === obj.toString)
         
-        val numbers = JsonArray()
-        numbers += JsonNumber(42)
-        numbers += JsonNumber(64)
-        numbers += JsonNumber(99)
-        obj("numbers") = numbers
+        obj("numbers") = JsArray(42, 64, 99)
         assert("{\"firstName\":\"Jeremy\",\"lastName\":\"Cloud\",\"numbers\":[42,64,99]}" === obj.toString)
     }
 }

@@ -20,56 +20,58 @@ package net.scala0.json
 import java.io.{StringWriter,Writer}
 import java.lang.{Iterable => JIterable}
 
-class JsonWriter(out: Writer) {
+class JsWriter(out: Writer) {
     private var comma = false
     
     def this() = this(new StringWriter)
     
     override def toString: String = out.toString
     
-    def value(v: JsonValue): JsonWriter = v match {
-        case v @ JsonObject() => value(v)
-        case v @ JsonArray() => value(v)
-        case JsonString(v) => value(v)
-        case JsonNumber(v) => value(v)
-        case JsonBoolean(v) => value(v)
-        case JsonNull => nullValue
+    def value(v: JsValue): JsWriter = v match {
+        case v: JsObject => value(v)
+        case v: JsArray => value(v)
+        case JsString(v) => value(v)
+        case JsNumber(v) => value(v)
+        case JsBoolean(v) => value(v)
+        case JsNull => nullValue
         case null => nullValue
     }
     
-    def value(obj: JsonObject): JsonWriter = {
+    def value(obj: JsObject): JsWriter = {
         startObject
-        for (bin <- obj) binding(bin)
+        obj.foreach { 
+            case (k, v) => key(k).value(v)
+        }
         endObject
     }
     
-    def value(array: JsonArray): JsonWriter = {
+    def value(array: JsArray): JsWriter = {
         startArray
-        for (elem <- array) value(elem)
+        array.foreach(e => value(e))
         endArray
     }
     
-    def value(v: JsonString): JsonWriter = value(v.value)
-    def value(v: JsonNumber): JsonWriter = value(v.value)
-    def value(v: JsonBoolean): JsonWriter = value(v.value)
+    def value(v: JsString): JsWriter = value(v.value)
+    def value(v: JsNumber): JsWriter = value(v.value)
+    def value(v: JsBoolean): JsWriter = value(v.value)
     
-    def mapValue[V](v: V)(f: V=>JsonValue): JsonWriter = {
+    def mapValue[V](v: V)(f: V=>JsValue): JsWriter = {
         if (v == null) nullValue else value(f(v))
     }
     
-    def mapValue[V](opt: Option[V])(f: V=>JsonValue): JsonWriter = opt match {
+    def mapValue[V](opt: Option[V])(f: V=>JsValue): JsWriter = opt match {
         case None => nullValue
         case Some(v) => value(f(v))
     }
     
-    def writeValue[V](opt: Option[V])(f: V=>Unit): JsonWriter = opt match {
+    def writeValue[V](opt: Option[V])(f: V=>Unit): JsWriter = opt match {
         case None => nullValue
         case Some(v) => 
             f(v)
             this
     }
     
-    def value(v: String): JsonWriter = {
+    def value(v: String): JsWriter = {
         if (v == null) {
             nullValue
         }
@@ -101,37 +103,36 @@ class JsonWriter(out: Writer) {
         }
     }
     
-    def value(v: Number): JsonWriter = print(v.toString)
-    def value(v: Boolean): JsonWriter = print(v.toString)
-    def nullValue: JsonWriter = print("null")
-    def binding(bin: JsonBinding): JsonWriter = binding(bin.key, bin.value)
+    def value(v: Number): JsWriter = print(v.toString)
+    def value(v: Boolean): JsWriter = print(v.toString)
+    def nullValue: JsWriter = print("null")
     
-    def binding(k: String, v: JsonValue): JsonWriter = {
+    def binding(k: String, v: JsValue): JsWriter = {
         key(k)
         value(v)
     }
     
-    def key(k: String): JsonWriter = {
+    def key(k: String): JsWriter = {
         value(k)
         out.write(":")
         comma = false
         this
     }
     
-    def startObject: JsonWriter = {
+    def startObject: JsWriter = {
         if (comma) out.write(',')
         out.write('{')
         comma = false
         this
     }
     
-    def endObject: JsonWriter = {
+    def endObject: JsWriter = {
         out.write('}')
         comma = true
         this
     }
     
-    def writeObject[T](obj: T)(f: T=>Unit): JsonWriter = {
+    def writeObject[T](obj: T)(f: T=>Unit): JsWriter = {
         if (obj == null) {
             nullValue
         }
@@ -142,20 +143,20 @@ class JsonWriter(out: Writer) {
         }
     }
     
-    def startArray: JsonWriter = {
+    def startArray: JsWriter = {
         if (comma) out.write(',')
         out.write('[')
         comma = false
         this
     }
     
-    def endArray: JsonWriter = {
+    def endArray: JsWriter = {
         out.write(']')
         comma = true
         this
     }
     
-    def writeArray[T](array: Iterable[T])(f: T=>Unit): JsonWriter = {
+    def writeArray[T](array: Iterable[T])(f: T=>Unit): JsWriter = {
         if (array == null) {
             nullValue
         }
@@ -166,7 +167,7 @@ class JsonWriter(out: Writer) {
         }
     }
 
-    def writeArray[T](array: JIterable[T])(f: T=>Unit): JsonWriter = {
+    def writeArray[T](array: JIterable[T])(f: T=>Unit): JsWriter = {
         if (array == null) {
             nullValue
         }
@@ -178,7 +179,7 @@ class JsonWriter(out: Writer) {
         }
     }
 
-    def mapArray[T](values: Collection[T])(f: T=>JsonValue): JsonWriter = {
+    def mapArray[T](values: Collection[T])(f: T=>JsValue): JsWriter = {
         if (values == null || values.size == 0) {
             nullValue
         }
@@ -189,7 +190,7 @@ class JsonWriter(out: Writer) {
         }
     }
     
-    def print(str: String): JsonWriter = {
+    def print(str: String): JsWriter = {
         if (comma) out.write(',')
         out.write(str)
         comma = true

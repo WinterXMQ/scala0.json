@@ -18,53 +18,77 @@
 package net.scala0.json
 
 import java.io._
+import scala.collection.Map
 
 /**
  * The JSON object provides entry point methods for parsing json.
  */
 object JSON {
+    implicit def toJs(str: String) = JsString(str)
+    implicit def toJs(num: Int) = JsNumber(num)
+    implicit def toJs(num: Long) = JsNumber(num)
+    implicit def toJs(num: Float) = JsNumber(num)
+    implicit def toJs(num: Double) = JsNumber(num)
+    implicit def toJs(num: Number) = JsNumber(num)
+    implicit def toJs(bool: Boolean) = JsBoolean(bool)
+
+    /**
+     * Converts any value to a JsValue, is possible.  Throws
+     * a JsException if not possible.
+     */
+    def toJs(any: Any) = any match {
+        case null => JsNull
+        case js: JsValue => js
+        case str: String => JsString(str)
+        case num: Number => JsNumber(num)
+        case bool: Boolean => JsBoolean(bool)
+        case map: Map[String,_] => JsObject(map)
+        case seq: Seq[_] => Console.println("converting to JsArray: " + seq); JsArray(seq)
+        case a => JsString(a.toString)
+    }
+
     /**
      * Parses the input as any JSON value.
      */
-    def parse(source: String): JsonValue = {
-        new JsonReader(new JsonTokenizer(source)).parseValue
+    def parse(source: String): JsValue = {
+        new JsReader(new JsTokenizer(source)).parseValue
     }
     
     /**
      * Parses the input as any JSON value.
      */
-    def parse(input: Reader): JsonValue = {
-        new JsonReader(new JsonTokenizer(input)).parseValue
+    def parse(input: Reader): JsValue = {
+        new JsReader(new JsTokenizer(input)).parseValue
     }
     
     /**
      * Parses the input as any JSON value.
      */
-    def parse(input: InputStream): JsonValue = {
-        new JsonReader(new JsonTokenizer(new InputStreamReader(input))).parseValue
+    def parse(input: InputStream): JsValue = {
+        new JsReader(new JsTokenizer(new InputStreamReader(input))).parseValue
     }
 
     /**
      * Parses the input as a JSON object.  
      */
-    def parseObject(source: String): JsonObject = parse(source) match {
-        case obj @ JsonObject() => obj
-        case v @ _ => throw new JsonException("Expecting object, found: " + v)
+    def parseObject(source: String): JsObject = parse(source) match {
+        case obj: JsObject => obj
+        case v => throw new JsException("Expecting object, found: " + v)
     }
     
     /**
      * Parses the input as a JSON object.  
      */
-    def parseObject(input: Reader): JsonObject = parse(input) match {
-        case obj @ JsonObject() => obj
-        case v @ _ => throw new JsonException("Expecting object, found: " + v)
+    def parseObject(input: Reader): JsObject = parse(input) match {
+        case obj: JsObject => obj
+        case v => throw new JsException("Expecting object, found: " + v)
     }
     
     /**
      * Parses the input as a JSON object.  
      */
-    def parseObject(input: InputStream): JsonObject = parse(input) match {
-        case obj @ JsonObject() => obj
-        case v @ _ => throw new JsonException("Expecting object, found: " + v)
+    def parseObject(input: InputStream): JsObject = parse(input) match {
+        case obj: JsObject => obj
+        case v => throw new JsException("Expecting object, found: " + v)
     }
 }

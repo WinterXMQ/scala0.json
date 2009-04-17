@@ -17,17 +17,19 @@
  */
 package net.scala0.json
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
- * JsonReader builds JsonValues using a JsonTokenizer.  Typically,
+ * JsReader builds JsValues using a JsTokenizer.  Typically,
  * you wouldn't use this class directly, you would just use the 
  * JSON class.
  */
-class JsonReader(tkr: JsonTokenizer) {
+class JsReader(tkr: JsTokenizer) {
     /**
-     * Reads the next option value, returning Some(JsonValue) if found,
+     * Reads the next option value, returning Some(JsValue) if found,
      * or None if the end of the stream is reached
      */
-    def readValue: Option[JsonValue] = {
+    def readValue: Option[JsValue] = {
         tkr.next match {
             case None => None
             case Some(token) => Some(parseValue(token))
@@ -35,101 +37,101 @@ class JsonReader(tkr: JsonTokenizer) {
     }
     
     /**
-     * Parses the next value.  Throws JsonException if the end
+     * Parses the next value.  Throws JsException if the end
      * of the stream is reached.
      */
-    def parseValue: JsonValue = parseValue(nextToken)
+    def parseValue: JsValue = parseValue(nextToken)
     
-    private def parseValue(token: JsonToken): JsonValue = {
+    private def parseValue(token: JsToken): JsValue = {
         token.ttype match {
-            case '"' => JsonString(token.text)
+            case '"' => JsString(token.text)
             case '0' => parseNumber(token.text)
             case 'a' => 
                 token.text match {
-                    case "true" => JsonBoolean(true)
-                    case "false" => JsonBoolean(false)
-                    case "null" => JsonNull
-                    case _ => throw new JsonException("Unexpected token: `" + token.text + "`")
+                    case "true" => JsBoolean(true)
+                    case "false" => JsBoolean(false)
+                    case "null" => JsNull
+                    case _ => throw new JsException("Unexpected token: `" + token.text + "`")
                 }
             case '{' => parseObject
             case '[' => parseArray
-            case _ => throw new JsonException("Unexpected token: `" + token.text + "`")
+            case _ => throw new JsException("Unexpected token: `" + token.text + "`")
         }
     }
 
-    private def parseNumber(text: String): JsonValue = {
+    private def parseNumber(text: String): JsValue = {
         if (text.indexOf('.') >= 0 || text.indexOf('e') >= 0 || text.indexOf('E') >= 0) {
-            JsonNumber(text.toDouble)
+            JsNumber(text.toDouble)
         }
         else {
             val longVal = text.toLong
             val intVal = text.toInt
             if (intVal == longVal) {
-                JsonNumber(intVal)
+                JsNumber(intVal)
             }
             else {
-                JsonNumber(longVal)
+                JsNumber(longVal)
             }
         }
     }
     
-    private def parseObject: JsonValue = {
-        val obj = new JsonObject()
+    private def parseObject: JsValue = {
+        val buf = new JsObjectBuffer
         
         if (tkr.peek != '}') {
-            obj += parseBinding
+            buf += parseBinding
             
             while (tkr.peek == ',') {
                 tkr.next // skip comma
-                obj += parseBinding
+                buf += parseBinding
             }
         }
         
         matchToken('}')
-        obj
+        // wrap with immutable JsObject
+        JsObject(buf)
     }
     
-    private def parseBinding: JsonBinding = {
+    private def parseBinding: (String,JsValue) = {
         val key = nextToken match {
-            case JsonToken(ttype, text) =>
+            case JsToken(ttype, text) =>
                 ttype match {
                     case '"' => text
                     case 'a' => text
-                    case _ => throw new JsonException("Expecting string or identifier, found `" + text + "`")
+                    case _ => throw new JsException("Expecting string or identifier, found `" + text + "`")
                 }
         }
         matchToken(':')
-        val value = parseValue
-        new JsonBinding(key, value)
+        (key, parseValue)
     }
     
-    private def parseArray: JsonValue = {
-        val array = new JsonArray()
+    private def parseArray: JsValue = {
+        val buf = new ArrayBuffer[JsValue]
         
         if (tkr.peek != ']') {
-            array += parseValue
+            buf += parseValue
             
             while (tkr.peek == ',') {
                 tkr.next // skip comma
-                array += parseValue
+                buf += parseValue
             }
         }
         
         matchToken(']')
-        array
+        JsArray(buf)
     }
     
-    private def nextToken: JsonToken = {
+    private def nextToken: JsToken = {
         tkr.next match {
-            case None => throw new JsonException("Unexpected end of input")
+            case None => throw new JsException("Unexpected end of input")
             case Some(token) => token
         }
     }
     
-    private def matchToken(expectedType: Char): JsonToken = {
+    private def matchToken(expectedType: Char): JsToken = {
         val token = nextToken
         if (token.ttype != expectedType) {
-            throw new JsonException("Unexpected token: `" + token.text + "`")
+            throw new JsException("Unexpected token: `" + token.text + "`")
         }
         else {
             token
