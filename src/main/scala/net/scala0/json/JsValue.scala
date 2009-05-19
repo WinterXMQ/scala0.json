@@ -20,7 +20,7 @@ package net.scala0.json
 import java.io._
 import scala.collection.{Map => BaseMap}
 import scala.collection.immutable.HashMap
-import scala.collection.mutable.{ArrayBuffer, LinkedHashMap}
+import scala.collection.mutable.{ArrayBuffer, Buffer, LinkedHashMap}
 import JSON.toJs
 
 /**
@@ -92,7 +92,7 @@ case object JsUndefined extends JsValue  {
 /**
  * An immutable representation of a json-array
  */
-trait JsArray extends RandomAccessSeq[JsValue] with JsValue {
+trait JsArray extends Seq[JsValue] with JsValue {
     /**
      * Two JsArrays are equal if they contain the same elements, even if
      * they are different classes.
@@ -124,35 +124,40 @@ object JsArray {
     /**
      * Builds an immutable JsArray backed by the given sequence of values.
      */
+    /*
     def apply(values: Seq[Any]): JsArray = {
         val buf = new JsArrayBuffer
         values.foreach(buf += toJs(_))
         apply(buf)
     }
+    */
     
     /**
      * Builds an immutable JsArray backed by the given sequence of values.
      */
-    def apply(values: Seq[JsValue]) = new JsArray {
+    def apply(values: Seq[JsValue]): JsArray = new JsArray {
         def length = values.size
+        def elements = values.elements
         override def apply(index: Int) = values(index)
     }
     
     def unapplySeq(arr: JsArray): Option[Seq[JsValue]] = Some(arr)
 }
 
+trait JsMutableArray extends Buffer[JsValue] with RandomAccessSeq.Mutable[JsValue] with JsArray
+
 /**
  * A mutable, ArrayBuffer-based JsArray
  */
-class JsArrayBuffer extends ArrayBuffer[JsValue] with JsArray {
+class JsArrayBuffer extends ArrayBuffer[JsValue] with JsMutableArray {
     override def apply(index: Int): JsValue = super[ArrayBuffer].apply(index)
 }
 
-object JsArrayBuffer {
+object JsMutableArray {
     /**
      * Builds a mutable JsArrayBuffer from a sequence of values.
      */
-    def apply(head: Any, tail: Any*): JsArrayBuffer = {
+    def apply(head: Any, tail: Any*): JsMutableArray = {
         val buf = new JsArrayBuffer
         buf += toJs(head)
         tail.foreach(buf += toJs(_))
@@ -162,7 +167,7 @@ object JsArrayBuffer {
     /**
      * Builds a mutable JsArrayBuffer from a sequence of values.
      */
-    def apply(values: Seq[Any]): JsArrayBuffer = {
+    def apply(values: Seq[Any]): JsMutableArray = {
         val buf = new JsArrayBuffer
         values.foreach(buf += toJs(_))
         buf

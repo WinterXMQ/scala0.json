@@ -36,14 +36,14 @@ object JSON {
      * Converts any value to a JsValue, is possible.  Throws
      * a JsException if not possible.
      */
-    def toJs(any: Any) = any match {
+    def toJs(any: Any): JsValue = any match {
         case null => JsNull
         case js: JsValue => js
         case str: String => JsString(str)
         case num: Number => JsNumber(num)
         case bool: Boolean => JsBoolean(bool)
         case map: Map[String,_] => JsObject(map)
-        case seq: Seq[_] => Console.println("converting to JsArray: " + seq); JsArray(seq)
+        case seq: Seq[_] => JsArray(seq.map(toJs(_)))
         case a => JsString(a.toString)
     }
 
