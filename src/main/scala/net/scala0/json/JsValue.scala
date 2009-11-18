@@ -1,20 +1,18 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed
- * with this work for additional information regarding copyright
- * ownership.  The ASF licenses this file to you under the Apache
- * License, Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a copy of
- * the License at
- *    
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.  See the License for the specific language governing
- * permissions and limitations under the License.
- */
+/*
+    Copyright 2009 Jeremy Cloud
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
 package net.scala0.json
 
 import java.io._
@@ -26,7 +24,7 @@ import JSON.toJs
 /**
  * The root JsValue class.
  */
-trait JsValue {
+sealed trait JsValue {
     override def toString: String = {
         val sp = new StringWriter
         new JsWriter(sp).value(this)
@@ -61,17 +59,17 @@ trait JsValue {
 /**
  * A JsNumber wraps a Number, which might be a Double or a Long.
  */
-case class JsNumber(val value: Number) extends JsValue {
+case class JsNumber(value: Number) extends JsValue {
     override def toString = value.toString
     override val toNumber = value
 }
 
-case class JsBoolean(val value: Boolean) extends JsValue {
+case class JsBoolean(value: Boolean) extends JsValue {
     override def toString = value.toString
     override val toBoolean = value
 }
 
-case class JsString(val value: String) extends JsValue {
+case class JsString(value: String) extends JsValue {
     override val text = value    
 }
 
